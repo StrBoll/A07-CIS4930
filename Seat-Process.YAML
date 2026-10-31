@@ -1,0 +1,105 @@
+openapi: 3.2.1
+info:
+  title: OpenAPI AMC Movie Theater Seat Reservation API
+  version: 0.0.1
+  description: This OpenAPI Spec details the various endpoints involved in the process of displaying available seating arrangments at a movie, selecting available seats for ticketing, and finally reserving them through purchase. 
+paths: 
+  /seats: 
+    post: 
+      summary: Select seats for a showtime and format combination 
+      requestBody: 
+        required: true 
+        content:
+          application/json:
+            schema:
+              type: object 
+              properties: 
+                format: 
+                  type: string 
+                seatsSelected: 
+                  type: string 
+                time: 
+                  type: integer 
+                location:
+                  type: string 
+
+      responses: 
+        "200": 
+          description: Creating a booking with the selected seats for the selected showtime, format, location. 
+          content: 
+            application/json: 
+              schema: 
+                type: array
+                seatRowColumn: 
+                  type: string
+        "400":
+          description: The seats are either unavailable or being held for checkout. 
+        "404":
+          description: There was an error with the request
+  /seats/{booking}:
+    get:
+      summary: Return the showtime, format, location, and selected seats for the booking. 
+      parameters: 
+        - name: booking 
+          in: path 
+          required: true 
+          description: The identification number for the booking with AMC 17 characters long. 
+          schema: 
+            type: string 
+          example: "SH4M4L4M4D1NGD0NG"
+      responses: 
+        "200": 
+          description: Return the showtime, location, seats for the booking
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  bookingNum:
+                    type: string
+                    example: "SH4M4L4M4D1NGD0NG"
+                  location:
+                    type: string
+                    example: AMC Veterans 24
+                  movie: 
+                    type: string
+                    example: Clayface 
+                  time: 
+                    description: military time
+                    type: integer
+                    example: 1400
+                  seats:
+                    description: "Simultaneously concatenated seats separated with commas "
+                    type: string 
+                    example: "G14,G15,G16"
+                  format: 
+                    description:: "What format the movie is in."
+                    type: string
+                    example: "dolby"
+        "404":
+          description: The booking ID was not found. 
+
+  /seats/{booking}/change:
+    delete: 
+      summary: Delete the current seats selected for a booking. 
+    parameter: 
+      - name: booking 
+        in: path 
+        required: true 
+        schema: 
+          type: string 
+    responses: 
+      "200": 
+        description: "The seats were successfully deleted from the booking. "
+      "400": 
+        description: "The seats were unable to be deleted from the booking."
+      "404":
+        description: "The booking was not found. "
+
+
+                  
+        
+
+
+
+        
